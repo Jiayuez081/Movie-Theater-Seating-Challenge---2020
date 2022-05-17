@@ -7,16 +7,19 @@ def solution():
 
     # we have a dictionary to record whether a row is full (no avalible seats).
     #isfull = {row : False for row in range(10)}
-    #
-
+    
+    # Read input file into a list
     inFile = sys.argv[1]
     outFile = sys.argv[2]
     f = open(inFile, "r").readlines()
     input = [s.split(" ") for s in f]
-    
 
+    
+    
+    # List that store each reservation
     res = []
 
+    # DFS that find avalible seats. 
     def dfs(r, c, remain, positions, resIndex):
         """ Base case that we found a valid reservation of seats
              we set these seat occupied in the matrix. """
@@ -40,7 +43,7 @@ def solution():
             return False
 
         """ Case that the row is not enough for reservation"""
-        if c + remain > 19:
+        if c + remain > 20:
             return False
 
         """ Case that the seat is not buffer by 3 positions. """
@@ -68,8 +71,12 @@ def solution():
 
         return dfs(r, c + 1, remain - 1, positions + [(r, c)], resIndex)
         
-
+    print(input)
+    # Start DFS, append reservation index and (seat positions or an explaination)
     for resIndex, num in input:
+        if num[:-1].isalpha() or int(num[:-1]) < 1 or int(num[:-1]) > 20:
+            res.append([resIndex, "Invalid Reservation"])
+            continue
         for r in range(10):
             #if isfull[r]:
                 #continue
@@ -77,9 +84,9 @@ def solution():
                 found = dfs(r, c, int(num[:-1]), [], resIndex)
                 if found:break
             if found: break
-        if not found: res.append([resIndex, "Cannot reserve since we don't have invalid positions"])
+        if not found: res.append([resIndex, "Cannot reserve since we don't have enough positions"])
 
-
+    # Write output file.
     f = open(outFile, "w")
     for resIndex, positions in res:
         f.write(resIndex + " ")
@@ -90,8 +97,6 @@ def solution():
         else:
             f.write(positions + "\n")
     f.close()
-
-
     return f
 
 solution()
